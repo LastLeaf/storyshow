@@ -1,0 +1,26 @@
+{
+	"version": "0.1.0",
+	"name": "storyshow",
+	"description": "an HTML5 interactive fiction engine",
+	"keywords": [
+		"interactive fiction",
+		"game engine"
+	],
+	"homepage": "https://github.com/LastLeaf/storyshow",
+	"author": "LastLeaf <bqfu@163.com> (http://lastleaf.me)",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/LastLeaf/storyshow"
+	},
+	"bugs": {
+		"url": "http://github.com/LastLeaf/storyshow/issues"
+	},
+	"devDependencies": {
+		"gulp": "^3.9.0",
+		"gulp-concat": "^2.6.0",
+		"gulp-uglify": "^1.2.0",
+		"gulp-sourcemaps": "^1.5.2",
+		"del": "^1.2.0"
+	},
+	"license": "MIT"
+}
