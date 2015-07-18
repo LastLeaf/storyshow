@@ -8,7 +8,11 @@ var sourcemaps = require('gulp-sourcemaps');
 var del = require('del');
 
 var paths = {
-	scripts: ['src/*.js']
+	scripts: [
+		'src/init.js',
+		'src/event.js',
+		'src/stage.js'
+	]
 };
 
 gulp.task('clean', function(cb){

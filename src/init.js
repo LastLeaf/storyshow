@@ -1,5 +1,5 @@
-'use strict';
+(function(exports){
+	'use strict';
 
-(function(){
-	this.StoryShow = function(){};
-})(this);
+	exports.StoryShow = {};
+})(this.exports || this);
