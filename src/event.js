@@ -36,9 +36,13 @@
 		var emit = function(e){
 			if(!eventMap[e]) return;
 			var events = eventMap[e];
-			for(var i=0; i<events.length; i++) {
+			var args = [];
+			for(var i=0; i<arguments.length; i++) {
+				args.push(arguments[i]);
+			}
+			for(i=0; i<events.length; i++) {
 				try {
-					events[i].func.call(StoryShow);
+					events[i].func.apply(StoryShow, args);
 				} catch(e) {
 					setTimeout(function(){
 						throw(e);
@@ -52,6 +56,7 @@
 
 		return Object.create(Object.prototype, {
 			on: { value: on },
+			once: { value: once },
 			off: { value: off },
 			emit: { value: emit }
 		});

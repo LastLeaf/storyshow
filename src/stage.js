@@ -8,6 +8,7 @@
 		height: standard height for content, default 720
 		scale: decide how to scale, "none", "default", default "default"
 		background: the color string for background of stage, default transparent
+		fps: frame per second used, default 60
 	*/
 
 	StoryShow.createStage = function(options){
@@ -16,6 +17,7 @@
 		var wrapper = bodyMode ? document.body : options.div;
 		var width = options.width || 1280;
 		var height = options.height || 720;
+		var frameInterval = 1000 / (options.fps || 60);
 
 		// create basic structure
 		var stageDiv = document.createElement('div');
@@ -71,9 +73,50 @@
 		};
 		background(options.background);
 
-		return Object.create(StoryShow.createEventObj(), {
+		// init data
+		var eventObj = StoryShow.createEventObj();
+
+		// ticker
+		var started = false;
+		if(window.requestAnimationFrame) {
+			window.requestAnimationFrame(function(ts){
+				var frameTimeLeft = 0;
+				var framePrevTime = ts;
+				var ticker = function(ts){
+					frameTimeLeft += ts - framePrevTime;
+					framePrevTime = ts;
+					if(frameTimeLeft >= 0) {
+						frameTimeLeft -= frameInterval;
+						if(frameTimeLeft > 0) frameTimeLeft = 0;
+						if(started) eventObj.emit('frame');
+					}
+					window.requestAnimationFrame(ticker);
+				};
+				ticker(ts);
+			});
+		} else {
+			setTimeout(function(){
+				var ticker = function(){
+					if(started) eventObj.emit('frame');
+					setTimeout(ticker, frameInterval);
+				};
+				ticker();
+			}, 0);
+		}
+
+		// start stop
+		var start = function(){
+			started = true;
+		};
+		var stop = function(){
+			started = false;
+		};
+
+		return Object.create(eventObj, {
 			resize: { value: resize },
-			background: { value: background }
+			background: { value: background },
+			start: { value: start },
+			stop: { value: stop }
 		});
 	};
 
