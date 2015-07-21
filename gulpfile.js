@@ -28,7 +28,7 @@ gulp.task('scripts', ['clean'], function(){
 		.pipe(gulp.dest('bin'));
 });
 
-gulp.task('watch', function(){
+gulp.task('watch', ['scripts'], function(){
 	gulp.watch(paths.scripts, ['scripts']);
 });
 

@@ -8,9 +8,13 @@
 		<script type="text/javascript" src="../../bin/storyshow.min.js"></script>
 		<script type="text/javascript">
 			window.onload = function(){
-				StoryShow.createStage({
-					background: '#000'
+				var stage = StoryShow.createStage({
+					background: '#000',
+					fps: 0.2
 				});
+				stage.on('frame', function(){
+				});
+				stage.start();
 			};
 		</script>
 	</body>
