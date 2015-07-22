@@ -1,7 +1,7 @@
 (function(StoryShow){
 	'use strict';
 
-	StoryShow.createEventObj = function(){
+	StoryShow.createEventObj = function(protoEvent){
 		var idInc = 0;
 		var eventMap = {};
 
@@ -34,6 +34,7 @@
 			}
 		};
 		var emit = function(e){
+			if(protoEvent) protoEvent.emit(e);
 			if(!eventMap[e]) return;
 			var events = eventMap[e];
 			var args = [];
