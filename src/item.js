@@ -10,4 +10,6 @@
 		});
 	};
 
+	StoryShow.items = {};
+
 })( (this.exports || this).StoryShow );
