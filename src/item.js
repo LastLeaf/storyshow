@@ -1,13 +1,12 @@
 (function(StoryShow){
 	'use strict';
 
-	StoryShow.createItem = function(protoItem, properties){
+	StoryShow.createItem = function(protoItem, properties, handlers){
 		if(!protoItem) protoItem = {};
-		var eventObj = StoryShow.createEventObj(protoItem.eventObj);
-		return Object.create(eventObj, {
-			eventObj: {value: eventObj},
+		return {
+			handlers: handlers,
 			properties: {value: Object.create(protoItem.properties || Object.prototype, properties)}
-		});
+		};
 	};
 
 	StoryShow.items = {};

@@ -105,18 +105,30 @@
 		}
 
 		// start stop
+		var startedTime = 0;
+		var prevStartTime = 0;
 		var start = function(){
+			prevStartTime = Date.now();
 			started = true;
 		};
 		var stop = function(){
+			startedTime += Date.now() - prevStartTime;
+			prevStartTime = 0;
 			started = false;
 		};
+		var getStartedTime = function(){
+			return startedTime + Date.now() - prevStartTime;
+		};
+
+        // item system
+        // TODO
 
 		return Object.create(eventObj, {
 			resize: { value: resize },
 			background: { value: background },
 			start: { value: start },
-			stop: { value: stop }
+			stop: { value: stop },
+			getStartedTime: { value: startedTime }
 		});
 	};
 
