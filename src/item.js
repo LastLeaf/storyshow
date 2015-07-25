@@ -2,10 +2,16 @@
 	'use strict';
 
 	StoryShow.createItem = function(protoItem, properties, handlers){
-		if(!protoItem) protoItem = {};
+		var prop = Object.create(protoItem ? protoItem.properties : Object.prototype);
+		if(properties) {
+			for(var k in properties) {
+				prop[k] = properties[k];
+			}
+		}
 		return {
-			handlers: handlers,
-			properties: {value: Object.create(protoItem.properties || Object.prototype, properties)}
+			protoItem: protoItem || null,
+			handlers: handlers || {},
+			properties: prop
 		};
 	};
 

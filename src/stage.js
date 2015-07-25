@@ -121,15 +121,36 @@
 		};
 
         // item system
-        // TODO
+		var items = [];
+        var appendItem = function(protoItem, properties){
+			var item = StoryShow.createItem(protoItem, properties);
+			if(item.handlers.init) {
+				var domElem = item.handlers.init(item.properties, stage);
+				if(domElem) {
+					item.domElem = domElem;
+					stageDiv.appendChild(item);
+				}
+			}
+			items.push(item);
+		};
+		eventObj.on('frame', function(){
+			for(var i=0; i<items.length; i++) {
+				var item = items;
+				if( item.handlers.frame(item.domElem, item.properties, stage) === false ) {
+					items.splice(i--, 1);
+					stageDiv.removeChild(item.domElem);
+				}
+			}
+		});
 
-		return Object.create(eventObj, {
+		var stage = Object.create(eventObj, {
 			resize: { value: resize },
 			background: { value: background },
 			start: { value: start },
 			stop: { value: stop },
 			getStartedTime: { value: startedTime }
 		});
+		return stage;
 	};
 
 })( (this.exports || this).StoryShow );
