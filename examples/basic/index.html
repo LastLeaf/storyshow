@@ -10,9 +10,18 @@
 			window.onload = function(){
 				var stage = StoryShow.createStage({
 					background: '#000',
-					fps: 0.2
+					fps: 20
 				});
-				stage.on('frame', function(){
+				stage.appendItem(StoryShow.items.text, {
+					content: 'Hello world!',
+					width: 600,
+					fontSize: 40,
+					lineHeight: 60,
+					height: 60,
+					color: '#fff',
+					time: 3000,
+					fadeInTime: 1000,
+					fadeOutTime: 1000
 				});
 				stage.start();
 			};

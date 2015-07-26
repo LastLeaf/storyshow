@@ -41,17 +41,15 @@
 			for(var i=0; i<arguments.length; i++) {
 				args.push(arguments[i]);
 			}
-			for(i=0; i<events.length; i++) {
-				try {
-					events[i].func.apply(StoryShow, args);
-				} catch(e) {
-					setTimeout(function(){
-						throw(e);
-					});
-				}
+			var funcArr = [];
+			for(var i=0; i<events.length; i++) {
+				funcArr.push(events[i].func);
 				if(events[i].once) {
 					events.splice(i--, 1);
 				}
+			}
+			for(var i=0; i<funcArr.length; i++) {
+				funcArr[i].apply(StoryShow, args);
 			}
 		};
 

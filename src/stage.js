@@ -117,7 +117,7 @@
 			started = false;
 		};
 		var getStartedTime = function(){
-			return startedTime + Date.now() - prevStartTime;
+			return startedTime + (started ? Date.now() - prevStartTime : 0);
 		};
 
         // item system
@@ -128,15 +128,15 @@
 				var domElem = item.handlers.init(item.properties, stage);
 				if(domElem) {
 					item.domElem = domElem;
-					stageDiv.appendChild(item);
+					stageDiv.appendChild(domElem);
 				}
 			}
 			items.push(item);
 		};
 		eventObj.on('frame', function(){
 			for(var i=0; i<items.length; i++) {
-				var item = items;
-				if( item.handlers.frame(item.domElem, item.properties, stage) === false ) {
+				var item = items[i];
+				if( item.handlers.frame && item.handlers.frame(item.domElem, item.properties, stage) === false ) {
 					items.splice(i--, 1);
 					stageDiv.removeChild(item.domElem);
 				}
@@ -148,7 +148,8 @@
 			background: { value: background },
 			start: { value: start },
 			stop: { value: stop },
-			getStartedTime: { value: startedTime }
+			getStartedTime: { value: getStartedTime },
+			appendItem: { value: appendItem }
 		});
 		return stage;
 	};

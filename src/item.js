@@ -8,10 +8,16 @@
 				prop[k] = properties[k];
 			}
 		}
+		var hndl = Object.create(protoItem ? protoItem.handlers : Object.prototype);
+		if(handlers) {
+			for(var k in handlers) {
+				hndl[k] = handlers[k];
+			}
+		}
 		return {
 			protoItem: protoItem || null,
-			handlers: handlers || {},
-			properties: prop
+			properties: prop,
+			handlers: hndl
 		};
 	};
 
