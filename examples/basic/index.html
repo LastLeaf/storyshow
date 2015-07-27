@@ -9,19 +9,31 @@
 		<script type="text/javascript">
 			window.onload = function(){
 				var stage = StoryShow.createStage({
-					background: '#000',
-					fps: 20
+					background: '#000'
 				});
-				stage.appendItem(StoryShow.items.text, {
-					content: 'Hello world!',
-					width: 600,
-					fontSize: 40,
-					lineHeight: 60,
-					height: 60,
-					color: '#fff',
+				var img = new Image();
+				img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNguPT/PwAFeALRsAofNAAAAABJRU5ErkJggg==';
+				stage.appendItem(StoryShow.items.image, {
+					img: img,
+					width: 960,
+					height: 540,
 					time: 3000,
 					fadeInTime: 1000,
-					fadeOutTime: 1000
+					fadeOutTime: 500
+				}, {
+					destroy: function(){
+						stage.appendItem(StoryShow.items.text, {
+							content: 'Hello world!',
+							width: 600,
+							fontSize: 40,
+							lineHeight: 60,
+							height: 60,
+							color: '#fff',
+							time: 3000,
+							fadeInTime: 500,
+							fadeOutTime: 1000
+						});
+					}
 				});
 				stage.start();
 			};

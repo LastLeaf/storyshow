@@ -122,8 +122,8 @@
 
         // item system
 		var items = [];
-        var appendItem = function(protoItem, properties){
-			var item = StoryShow.createItem(protoItem, properties);
+        var appendItem = function(protoItem, properties, handlers){
+			var item = StoryShow.createItem(protoItem, properties, handlers);
 			if(item.handlers.init) {
 				var domElem = item.handlers.init(item.properties, stage);
 				if(domElem) {
@@ -139,6 +139,7 @@
 				if( item.handlers.frame && item.handlers.frame(item.domElem, item.properties, stage) === false ) {
 					items.splice(i--, 1);
 					stageDiv.removeChild(item.domElem);
+					if(item.handlers.destroy) item.handlers.destroy(item.properties, stage);
 				}
 			}
 		});

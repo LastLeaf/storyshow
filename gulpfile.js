@@ -13,7 +13,9 @@ var paths = {
 		'src/event.js',
 		'src/stage.js',
 		'src/item.js',
-		'src/items/*.js'
+		'src/items/empty.js',
+		'src/items/text.js',
+		'src/items/image.js'
 	]
 };
 
