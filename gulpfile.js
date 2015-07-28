@@ -15,7 +15,8 @@ var paths = {
 		'src/item.js',
 		'src/items/empty.js',
 		'src/items/text.js',
-		'src/items/image.js'
+		'src/items/image.js',
+		'src/items/audio.js'
 	]
 };
 

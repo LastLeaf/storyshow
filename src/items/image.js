@@ -13,7 +13,6 @@
 			img.style.width = '100%';
 			img.style.height = '100%';
 			div.appendChild(img);
-			console.info(div);
 			return div;
 		}
 	});
