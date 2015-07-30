@@ -12,18 +12,26 @@
 					background: '#000'
 				});
 				stage.appendItem(StoryShow.items.audio, {
-					src: []
+					src: [
+						'http://mistymiracle.github.io/a-lighted-story/src/data/audio/the_start_of_night.ogg',
+						'http://mistymiracle.github.io/a-lighted-story/src/data/audio/the_start_of_night.mp3'
+					],
+					preload: 'canplaythrough'
 				});
-				var img = new Image();
-				img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNguPT/PwAFeALRsAofNAAAAABJRU5ErkJggg==';
 				stage.appendItem(StoryShow.items.image, {
-					img: img,
+					src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNguPT/PwAFeALRsAofNAAAAABJRU5ErkJggg==',
 					width: 960,
 					height: 540,
 					time: 3000,
 					fadeInTime: 1000,
 					fadeOutTime: 500
 				}, {
+					pause: function(){
+						console.log('Stage paused!');
+					},
+					play: function(){
+						console.log('Stage playing!');
+					},
 					destroy: function(){
 						stage.appendItem(StoryShow.items.text, {
 							content: 'Hello world!',

@@ -5,10 +5,13 @@
 
 	StoryShow.items.audio = StoryShow.createItem(invisible, {
 		src: '',
+		preload: '', // one of 'none', 'loadedmetadata', 'canplay', 'canplaythrough', 'loadeddata'
 		loop: false
 	}, {
-		init: function(properties, stage){
+		init: function(item){
+			var properties = item.properties;
 			var audio = document.createElement('audio');
+			audio.setAttribute('preload', 'auto');
 			if(typeof(properties.src) !== 'object') {
 				audio.src = properties.src;
 			} else {
@@ -21,11 +24,41 @@
 			audio.loop = properties.loop;
 			audio.volume = 1;
 			audio.stageStarted = false;
+			// loading status management
+			audio.onwaiting = function(){
+				audio.waitLoading = true;
+				item.stage.loadStart(item);
+			};
+			audio.onplaying = function(){
+				if(!audio.waitLoading) return;
+				audio.pause();
+				audio.waitLoading = false;
+				item.stage.loadEnd(item);
+			};
+			if(properties.preload === 'loadedmetadata' || properties.preload === 'canplay' || properties.preload === 'canplaythrough' || properties.preload === 'loadeddata') {
+				item.stage.loadStart(item);
+				var eventName = 'on' + properties.preload;
+				audio[eventName] = function(){
+					audio[eventName] = null;
+					item.stage.loadEnd(item);
+				};
+			}
 			return audio;
 		},
-		frame: function(audio, properties, stage){
-			if(!audio.stageStarted) audio.play();
-			else if(!properties.loop && audio.ended) return false;
+		frame: function(item, audio){
+			if(!audio.stageStarted) {
+				audio.play();
+				audio.stageStarted = true;
+			} else if(!audio.loop && audio.ended) {
+				return false;
+			}
+		},
+		pause: function(item, audio){
+			if(audio.waitLoading) return;
+			audio.pause();
+		},
+		play: function(item, audio){
+			audio.play();
 		}
 	});
 

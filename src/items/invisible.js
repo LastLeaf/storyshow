@@ -1,7 +1,7 @@
 (function(StoryShow){
 	'use strict';
 
-	StoryShow.items.empty = StoryShow.createItem(null, {
+	StoryShow.items.invisible = StoryShow.createItem(null, {
 		left: 0,
 		right: 0,
 		top: 0,
@@ -17,10 +17,10 @@
 		fadeOutTime: 0,
 		time: 0,
 	}, {
-		init: function(properties, stage){
+		init: function(item){
 			return null;
 		},
-		frame: function(div, properties, stage){
+		frame: function(item, div){
 			return;
 		}
 	});

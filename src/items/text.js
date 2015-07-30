@@ -1,9 +1,9 @@
 (function(StoryShow){
 	'use strict';
 
-	var empty = StoryShow.items.empty;
+	var visible = StoryShow.items.visible;
 
-	StoryShow.items.text = StoryShow.createItem(empty, {
+	StoryShow.items.text = StoryShow.createItem(visible, {
 		content: '',
 		fontStyle: 'normal',
 		fontWeight: 'normal',
@@ -13,8 +13,9 @@
 		textAlign: 'center',
 		color: ''
 	}, {
-		init: function(properties, stage){
-			var div = empty.handlers.init(properties, stage);
+		init: function(item){
+			var div = visible.handlers.init(item);
+			var properties = item.properties;
 			div.style.fontStyle = properties.fontStyle;
 			div.style.fontWeight = properties.fontWeight;
 			div.style.fontSize = properties.fontSize + 'px';

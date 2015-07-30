@@ -13,7 +13,8 @@ var paths = {
 		'src/event.js',
 		'src/stage.js',
 		'src/item.js',
-		'src/items/empty.js',
+		'src/items/visible.js',
+		'src/items/invisible.js',
 		'src/items/text.js',
 		'src/items/image.js',
 		'src/items/audio.js'

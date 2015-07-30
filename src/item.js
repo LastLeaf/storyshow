@@ -17,7 +17,10 @@
 		return {
 			protoItem: protoItem || null,
 			properties: prop,
-			handlers: hndl
+			handlers: hndl,
+			stage: null,
+			domElem: null,
+			loading: false
 		};
 	};
 

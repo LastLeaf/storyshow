@@ -1,7 +1,7 @@
 (function(StoryShow){
 	'use strict';
 
-	StoryShow.items.empty = StoryShow.createItem(null, {
+	StoryShow.items.visible = StoryShow.createItem(null, {
 		left: 0,
 		right: 0,
 		top: 0,
@@ -17,7 +17,8 @@
 		fadeOutTime: 0,
 		time: 0,
 	}, {
-		init: function(properties, stage){
+		init: function(item){
+			var properties = item.properties;
 			var div = document.createElement('div');
 			div.style.position = 'absolute';
 			div.style.margin = 'auto';
@@ -33,11 +34,12 @@
 			div.style.paddingTop = properties.paddingTop + 'px';
 			div.style.paddingBottom = properties.paddingBottom + 'px';
 			div.style.opacity = 0;
-			div.initTime = stage.getStartedTime();
+			div.initTime = item.stage.getPlayingTime();
 			return div;
 		},
-		frame: function(div, properties, stage){
-			var aniTime = stage.getStartedTime() - div.initTime;
+		frame: function(item, div){
+			var properties = item.properties;
+			var aniTime = item.stage.getPlayingTime() - div.initTime;
 			if(aniTime > properties.time) {
 				return false;
 			} else if(aniTime < properties.fadeInTime) {
