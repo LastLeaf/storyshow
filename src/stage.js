@@ -153,35 +153,42 @@
 			updatePlayingStatus();
 			eventObj.emit('stop');
 		};
+		var isStarted = function(){
+			return started;
+		};
 
-        // item system
+		// item system
 		var items = [];
-        var appendItem = function(protoItem, properties, handlers){
+		var appendItem = function(protoItem, properties, handlers){
 			var item = StoryShow.createItem(protoItem, properties, handlers);
 			item.stage = stage;
 			items.push(item);
-			if(item.handlers.init) {
-				var domElem = item.handlers.init(item);
-				if(domElem) {
-					item.domElem = domElem;
-					stageDiv.appendChild(domElem);
-				}
+			var domElem = item.handlers.init(item);
+			if(domElem) {
+				item.domElem = domElem;
+				stageDiv.appendChild(domElem);
 			}
+			return item;
+		};
+		var removeItem = function(item){
+			for(var i=0; i<items.length; i++) {
+				if(item === items[i]) break;
+			}
+			items.splice(i, 1);
+			stageDiv.removeChild(item.domElem);
+			item.handlers.destroy(item);
 		};
 		eventObj.on('frame', function(){
-			for(var i=0; i<items.length; i++) {
-				var item = items[i];
-				if( item.handlers.frame && item.handlers.frame(item, item.domElem) === false ) {
-					items.splice(i--, 1);
-					stageDiv.removeChild(item.domElem);
-					if(item.handlers.destroy) item.handlers.destroy(item);
-				}
-			}
+			triggerItemHandlers('frame', function(item, r){
+				if(r === false) removeItem(item);
+			});
 		});
-		var triggerItemHandlers = function(e){
-			for(var i=0; i<items.length; i++) {
-				var item = items[i];
-				if(item.handlers[e]) item.handlers[e](item, item.domElem);
+		var triggerItemHandlers = function(e, cb){
+			var arr = items.slice(0);
+			for(var i=0; i<arr.length; i++) {
+				var item = arr[i];
+				var r = item.handlers[e](item, item.domElem);
+				if(cb) cb(item, r);
 			}
 		};
 
@@ -213,6 +220,40 @@
 			item.loading = false;
 			updateLoadingStatus();
 		};
+		var isLoading = function(){
+			return loading;
+		};
+
+		// proxy mouse events
+		var buildMouseEventData = function(e){
+			var rect = stageDiv.getBoundingClientRect();
+			return {
+				x: e.clientX - rect.left,
+				y: e.clientY - rect.top,
+				dx: 0,
+				dy: 0,
+				button: e.button,
+				alt: e.altKey,
+				ctrl: e.ctrlKey,
+				meta: e.metaKey,
+				shift: e.shiftKey
+			};
+		};
+		stageDiv.addEventListener('click', function(e){
+			e.preventDefault();
+			var data = buildMouseEventData(e);
+			stage.emit('click', data);
+		});
+		stageDiv.addEventListener('wheel', function(e){
+			e.preventDefault();
+			var data = buildMouseEventData(e);
+			data.dx = e.deltaX;
+			data.dy = e.deltaY;
+			stage.emit('wheel', data);
+		});
+		stageDiv.addEventListener('contextmenu', function(e){
+			e.preventDefault();
+		});
 
 		var stage = Object.create(eventObj, {
 			resize: { value: resize },
@@ -220,6 +261,8 @@
 			start: { value: start },
 			stop: { value: stop },
 			isPlaying: { value: isPlaying },
+			isStarted: { value: isStarted },
+			isLoading: { value: isLoading },
 			getPlayingTime: { value: getPlayingTime },
 			appendItem: { value: appendItem },
 			loadStart: { value: loadStart },

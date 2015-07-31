@@ -22,16 +22,16 @@ var paths = {
 };
 
 gulp.task('clean', function(cb){
-	del(['bin'], cb);
+	cb();
 });
 
 gulp.task('scripts', ['clean'], function(){
-	return gulp.src(paths.scripts)
+	return gulp.src(paths.scripts, {base: 'src'})
 		.pipe(sourcemaps.init())
-			.pipe(uglify())
-			.pipe(concat('storyshow.min.js'))
-		.pipe(sourcemaps.write())
-		.pipe(gulp.dest('bin'));
+		.pipe(uglify())
+		.pipe(concat('storyshow.min.js'))
+		.pipe(sourcemaps.write('.', {includeContent: false, sourceRoot: 'src'}))
+		.pipe(gulp.dest('.'));
 });
 
 gulp.task('watch', ['scripts'], function(){

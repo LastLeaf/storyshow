@@ -49,6 +49,15 @@
 			} else {
 				div.style.opacity = 1;
 			}
+		},
+		pause: function(item, div){
+			return;
+		},
+		play: function(item, div){
+			return;
+		},
+		destroy: function(item){
+			return;
 		}
 	});
 

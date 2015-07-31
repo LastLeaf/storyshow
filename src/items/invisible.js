@@ -22,6 +22,15 @@
 		},
 		frame: function(item, div){
 			return;
+		},
+		pause: function(item, div){
+			return;
+		},
+		play: function(item, div){
+			return;
+		},
+		destroy: function(item){
+			return;
 		}
 	});
 

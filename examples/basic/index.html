@@ -5,7 +5,7 @@
 		<title>StoryShow</title>
 	</head>
 	<body>
-		<script type="text/javascript" src="../../bin/storyshow.min.js"></script>
+		<script type="text/javascript" src="../../storyshow.min.js"></script>
 		<script type="text/javascript">
 			window.onload = function(){
 				var stage = StoryShow.createStage({
@@ -13,8 +13,8 @@
 				});
 				stage.appendItem(StoryShow.items.audio, {
 					src: [
-						'http://mistymiracle.github.io/a-lighted-story/src/data/audio/the_start_of_night.ogg',
-						'http://mistymiracle.github.io/a-lighted-story/src/data/audio/the_start_of_night.mp3'
+						'http://mistymiracle.github.io/a-lighted-story/src/data/audio/lighted_stories.ogg',
+						'http://mistymiracle.github.io/a-lighted-story/src/data/audio/lighted_stories.mp3'
 					],
 					preload: 'canplaythrough'
 				});
@@ -47,6 +47,10 @@
 					}
 				});
 				stage.start();
+				stage.on('click', function(){
+					if(stage.isStarted()) stage.stop();
+					else stage.start();
+				});
 			};
 		</script>
 	</body>
