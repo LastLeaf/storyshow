@@ -34,12 +34,15 @@
 			div.style.paddingTop = properties.paddingTop + 'px';
 			div.style.paddingBottom = properties.paddingBottom + 'px';
 			div.style.opacity = 0;
-			div.initTime = item.stage.getPlayingTime();
 			return div;
+		},
+		start: function(item, div){
+			div.startTime = item.stage.getPlayingTime();
+			return;
 		},
 		frame: function(item, div){
 			var properties = item.properties;
-			var aniTime = item.stage.getPlayingTime() - div.initTime;
+			var aniTime = item.stage.getPlayingTime() - div.startTime;
 			if(aniTime > properties.time) {
 				return false;
 			} else if(aniTime < properties.fadeInTime) {

@@ -20,6 +20,7 @@
 			handlers: hndl,
 			stage: null,
 			domElem: null,
+			running: false,
 			loading: false
 		};
 	};

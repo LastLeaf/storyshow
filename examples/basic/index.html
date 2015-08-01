@@ -11,14 +11,14 @@
 				var stage = StoryShow.createStage({
 					background: '#000'
 				});
-				stage.appendItem(StoryShow.items.audio, {
+				var audio1 = stage.createItem(StoryShow.items.audio, {
 					src: [
 						'http://mistymiracle.github.io/a-lighted-story/src/data/audio/lighted_stories.ogg',
 						'http://mistymiracle.github.io/a-lighted-story/src/data/audio/lighted_stories.mp3'
 					],
 					preload: 'canplaythrough'
 				});
-				stage.appendItem(StoryShow.items.image, {
+				var image1 = stage.createItem(StoryShow.items.image, {
 					src: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQImWNguPT/PwAFeALRsAofNAAAAABJRU5ErkJggg==',
 					width: 960,
 					height: 540,
@@ -33,17 +33,28 @@
 						console.log('Stage playing!');
 					},
 					destroy: function(){
-						stage.appendItem(StoryShow.items.text, {
-							content: 'Hello world!',
-							width: 600,
-							fontSize: 40,
-							lineHeight: 60,
-							height: 60,
-							color: '#fff',
-							time: 3000,
-							fadeInTime: 500,
-							fadeOutTime: 1000
-						});
+						stage.appendItem(text1);
+					}
+				});
+				var text1 = stage.createItem(StoryShow.items.text, {
+					content: 'Hello world!',
+					width: 600,
+					fontSize: 40,
+					lineHeight: 60,
+					height: 60,
+					color: '#fff',
+					time: 3000,
+					fadeInTime: 500,
+					fadeOutTime: 1000
+				});
+				stage.appendItem(audio1);
+				stage.appendItem(image1);
+				var prevLoadingCount = 0;
+				stage.on('loadProgress', function(){
+					var c = stage.countLoadingItems();
+					if(c !== prevLoadingCount) {
+						console.log('Loading: ' + c + ' item(s) left');
+						prevLoadingCount = c;
 					}
 				});
 				stage.start();

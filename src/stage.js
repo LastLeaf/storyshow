@@ -95,10 +95,8 @@
 					if(frameTimeLeft >= 0) {
 						frameTimeLeft -= frameInterval;
 						if(frameTimeLeft > 0) frameTimeLeft = 0;
-						if(started) {
-							if(loading) eventObj.emit('loadProgress');
-							else eventObj.emit('frame');
-						}
+						if(loading) eventObj.emit('loadProgress');
+						else if(started) eventObj.emit('frame');
 					}
 					window.requestAnimationFrame(ticker);
 				};
@@ -107,10 +105,8 @@
 		} else {
 			setTimeout(function(){
 				var ticker = function(){
-					if(started) {
-						if(loading) eventObj.emit('loadProgress');
-						else eventObj.emit('frame');
-					}
+					if(loading) eventObj.emit('loadProgress');
+					else if(started) eventObj.emit('frame');
 					setTimeout(ticker, frameInterval);
 				};
 				ticker();
@@ -123,11 +119,13 @@
 		var startPlay = function(){
 			prevStartTime = Date.now();
 			triggerItemHandlers('play');
+			eventObj.emit('play');
 		};
 		var stopPlay = function(){
 			playingTime += Date.now() - prevStartTime;
 			prevStartTime = 0;
 			triggerItemHandlers('pause');
+			eventObj.emit('pause');
 		};
 		var getPlayingTime = function(){
 			return playingTime + (started ? Date.now() - prevStartTime : 0);
@@ -159,16 +157,20 @@
 
 		// item system
 		var items = [];
-		var appendItem = function(protoItem, properties, handlers){
+		var createItem = function(protoItem, properties, handlers){
 			var item = StoryShow.createItem(protoItem, properties, handlers);
 			item.stage = stage;
 			items.push(item);
 			var domElem = item.handlers.init(item);
-			if(domElem) {
-				item.domElem = domElem;
-				stageDiv.appendChild(domElem);
-			}
+			item.domElem = domElem || null;
 			return item;
+		};
+		var appendItem = function(item){
+			item.running = true;
+			if(item.domElem) {
+				stageDiv.appendChild(item.domElem);
+			}
+			item.handlers.start(item, item.domElem);
 		};
 		var removeItem = function(item){
 			for(var i=0; i<items.length; i++) {
@@ -176,6 +178,7 @@
 			}
 			items.splice(i, 1);
 			stageDiv.removeChild(item.domElem);
+			item.running = false;
 			item.handlers.destroy(item);
 		};
 		eventObj.on('frame', function(){
@@ -187,6 +190,7 @@
 			var arr = items.slice(0);
 			for(var i=0; i<arr.length; i++) {
 				var item = arr[i];
+				if(!item.running) continue;
 				var r = item.handlers[e](item, item.domElem);
 				if(cb) cb(item, r);
 			}
@@ -220,8 +224,12 @@
 			item.loading = false;
 			updateLoadingStatus();
 		};
-		var isLoading = function(){
-			return loading;
+		var countLoadingItems = function(){
+			var count = 0;
+			for(var i=0; i<items.length; i++) {
+				if(items.loading) count++;
+			}
+			return count;
 		};
 
 		// proxy mouse events
@@ -262,9 +270,11 @@
 			stop: { value: stop },
 			isPlaying: { value: isPlaying },
 			isStarted: { value: isStarted },
-			isLoading: { value: isLoading },
+			countLoadingItems: { value: countLoadingItems },
 			getPlayingTime: { value: getPlayingTime },
+			createItem: { value: createItem },
 			appendItem: { value: appendItem },
+			removeItem: { value: removeItem },
 			loadStart: { value: loadStart },
 			loadEnd: { value: loadEnd }
 		});

@@ -20,6 +20,9 @@
 		init: function(item){
 			return null;
 		},
+		start: function(item, div){
+			return;
+		},
 		frame: function(item, div){
 			return;
 		},
