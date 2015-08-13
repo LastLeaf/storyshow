@@ -37,12 +37,11 @@
 			return div;
 		},
 		start: function(item, div){
-			div.startTime = item.stage.getPlayingTime();
 			return;
 		},
 		frame: function(item, div){
 			var properties = item.properties;
-			var aniTime = item.stage.getPlayingTime() - div.startTime;
+			var aniTime = item.time.current;
 			if(aniTime > properties.time) {
 				return false;
 			} else if(aniTime < properties.fadeInTime) {

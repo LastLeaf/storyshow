@@ -114,31 +114,30 @@
 		}
 
 		// start stop
-		var playingTime = 0;
-		var prevStartTime = 0;
+		var playing = false;
 		var startPlay = function(){
-			prevStartTime = Date.now();
+			playing = true;
+			var ts = Date.now();
+			for(var i=0; i<items.length; i++) {
+				items[i].time.prevEvent = ts;
+			}
 			triggerItemHandlers('play');
 			eventObj.emit('play');
 		};
 		var stopPlay = function(){
-			playingTime += Date.now() - prevStartTime;
-			prevStartTime = 0;
+			playing = false;
+			var ts = Date.now();
+			for(var i=0; i<items.length; i++) {
+				items[i].time.current += ts - items[i].time.prevEvent;
+			}
 			triggerItemHandlers('pause');
 			eventObj.emit('pause');
 		};
-		var getPlayingTime = function(){
-			return playingTime + (started ? Date.now() - prevStartTime : 0);
-		};
-		var isPlaying = function(){
-			if(loading || !started) return false;
-			return true;
-		};
 		var updatePlayingStatus = function(){
 			if(loading || !started) {
-				if(prevStartTime) stopPlay();
+				if(playing) stopPlay();
 			} else {
-				if(!prevStartTime) startPlay();
+				if(!playing) startPlay();
 			}
 		};
 		var start = function(){
@@ -151,6 +150,9 @@
 			updatePlayingStatus();
 			eventObj.emit('stop');
 		};
+		var isPlaying = function(){
+			return playing;
+		};
 		var isStarted = function(){
 			return started;
 		};
@@ -160,13 +162,19 @@
 		var createItem = function(protoItem, properties, handlers){
 			var item = StoryShow.createItem(protoItem, properties, handlers);
 			item.stage = stage;
-			items.push(item);
 			var domElem = item.handlers.init(item);
 			item.domElem = domElem || null;
+			item.time = {
+				prevEvent: 0,
+				current: 0
+			};
+			item.running = false;
 			return item;
 		};
 		var appendItem = function(item){
+			items.push(item);
 			item.running = true;
+			item.time.prevEvent = Date.now();
 			if(item.domElem) {
 				stageDiv.appendChild(item.domElem);
 			}
@@ -177,11 +185,16 @@
 				if(item === items[i]) break;
 			}
 			items.splice(i, 1);
-			stageDiv.removeChild(item.domElem);
+			if(item.domElem) stageDiv.removeChild(item.domElem);
 			item.running = false;
 			item.handlers.destroy(item);
 		};
 		eventObj.on('frame', function(){
+			var ts = Date.now();
+			for(var i=0; i<items.length; i++) {
+				items[i].time.current += ts - items[i].time.prevEvent;
+				items[i].time.prevEvent = ts;
+			}
 			triggerItemHandlers('frame', function(item, r){
 				if(r === false) removeItem(item);
 			});
@@ -190,7 +203,6 @@
 			var arr = items.slice(0);
 			for(var i=0; i<arr.length; i++) {
 				var item = arr[i];
-				if(!item.running) continue;
 				var r = item.handlers[e](item, item.domElem);
 				if(cb) cb(item, r);
 			}
@@ -198,17 +210,15 @@
 
 		// loading management
 		var loading = false;
+		var loadingItems = [];
 		var updateLoadingStatus = function(){
-			for(var i=0; i<items.length; i++) {
-				var item = items[i];
-				if(item.loading) {
-					if(!loading) {
-						loading = true;
-						updatePlayingStatus();
-						eventObj.emit('loadStart');
-					}
-					return;
+			if(loadingItems.length) {
+				if(!loading) {
+					loading = true;
+					updatePlayingStatus();
+					eventObj.emit('loadStart');
 				}
+				return;
 			}
 			if(loading) {
 				loading = false;
@@ -217,19 +227,22 @@
 			}
 		};
 		var loadStart = function(item){
-			item.loading = true;
+			for(var i=0; i<loadingItems.length; i++) {
+				if(loadingItems[i] === item) return;
+			}
+			loadingItems.push(item);
 			updateLoadingStatus();
 		};
 		var loadEnd = function(item){
-			item.loading = false;
+			for(var i=0; i<loadingItems.length; i++) {
+				if(loadingItems[i] === item) break;
+			}
+			if(i === loadingItems.length) return;
+			loadingItems.splice(i, 1);
 			updateLoadingStatus();
 		};
 		var countLoadingItems = function(){
-			var count = 0;
-			for(var i=0; i<items.length; i++) {
-				if(items.loading) count++;
-			}
-			return count;
+			return loadingItems.length;
 		};
 
 		// proxy mouse events
@@ -271,7 +284,6 @@
 			isPlaying: { value: isPlaying },
 			isStarted: { value: isStarted },
 			countLoadingItems: { value: countLoadingItems },
-			getPlayingTime: { value: getPlayingTime },
 			createItem: { value: createItem },
 			appendItem: { value: appendItem },
 			removeItem: { value: removeItem },

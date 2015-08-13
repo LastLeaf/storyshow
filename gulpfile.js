@@ -17,7 +17,8 @@ var paths = {
 		'src/items/invisible.js',
 		'src/items/text.js',
 		'src/items/image.js',
-		'src/items/audio.js'
+		'src/items/audio.js',
+		'src/items/webaudio.js',
 	]
 };
 
