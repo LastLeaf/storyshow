@@ -3,14 +3,15 @@
 
 	var invisible = StoryShow.items.invisible;
 
+	var AudioContext = window.AudioContext || window.webkitAudioContext;
+	var context = new AudioContext();
+
 	StoryShow.items.webaudio = StoryShow.createItem(invisible, {
 		src: '',
 		loop: false
 	}, {
 		init: function(item){
 			var properties = item.properties;
-			var AudioContext = window.AudioContext || window.webkitAudioContext;
-			var context = new AudioContext();
 			// media type detect
 			var src = properties.src;
 			if(typeof(src) === 'object') {
@@ -55,6 +56,7 @@
 			source.connect(item.context.destination);
 			source.loop = item.properties.loop;
 			source.onended = function(){
+				source.disconnect();
 				if(!source.loop && source == item.source) item.ended = true;
 			};
 			item.source = source;
@@ -73,6 +75,7 @@
 			source.connect(item.context.destination);
 			source.loop = item.properties.loop;
 			source.onended = function(){
+				source.disconnect();
 				if(!source.loop && source == item.source) item.ended = true;
 			};
 			item.source = source;
